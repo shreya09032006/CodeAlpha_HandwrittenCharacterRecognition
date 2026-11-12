@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import RecognizePage from './pages/RecognizePage'
-import Insights from './components/Insights'
-import History from './components/History'
+import InsightsPage from './pages/InsightsPage'
+import HistoryPage from './pages/HistoryPage'
+import AuthPage from './pages/AuthPage'
 import SiteNav from './components/SiteNav'
 import AuthModal from './components/AuthModal'
 import { Footer } from './components/ui'
@@ -29,9 +30,6 @@ function Layout() {
   )
 }
 
-// Insights and History get their new look in the next step.
-const Legacy = ({ children }) => <div className="pt-28">{children}</div>
-
 export default function App() {
   return (
     <Routes>
@@ -40,8 +38,9 @@ export default function App() {
         <Route path="alphabet" element={<RecognizePage mode="character" />} />
         <Route path="word" element={<RecognizePage mode="word" />} />
         <Route path="essay" element={<RecognizePage mode="essay" />} />
-        <Route path="insights" element={<Legacy><Insights /></Legacy>} />
-        <Route path="history" element={<Legacy><History onSignIn={() => {}} /></Legacy>} />
+        <Route path="insights" element={<InsightsPage />} />
+        <Route path="history" element={<HistoryPage />} />
+        <Route path="auth" element={<AuthPage />} />
       </Route>
     </Routes>
   )
