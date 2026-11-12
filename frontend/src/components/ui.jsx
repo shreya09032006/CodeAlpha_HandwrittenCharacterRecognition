@@ -15,7 +15,7 @@ export function Reveal({ children, delay = 0, className = '' }) {
 
 export function Pill({ to, children, variant = 'ink', className = '', ...rest }) {
   const look = variant === 'ink' ? 'bg-ink text-mist' : 'border border-ink/20 bg-white/60 hover:bg-white'
-  const cls = `group inline-flex items-center gap-3 rounded-full px-6 py-3 text-xs uppercase tracking-[.14em] transition duration-500 ease-soft hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-40 ${look} ${className}`
+  const cls = `group inline-flex min-h-11 items-center justify-center gap-3 rounded-full px-6 py-3 text-xs uppercase tracking-[.14em] transition duration-500 ease-soft hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-40 ${look} ${className}`
   const inner = (
     <>
       {children}
@@ -27,7 +27,7 @@ export function Pill({ to, children, variant = 'ink', className = '', ...rest })
 
 export function PageHeader({ index, title, sub }) {
   return (
-    <header className="pb-10 pt-36">
+    <header className="pb-8 pt-32 md:pb-10 md:pt-36">
       <p className="text-xs uppercase tracking-[.2em] opacity-60">{index}</p>
       <h1 className="mt-3 font-display text-[clamp(3rem,8vw,6.5rem)] uppercase leading-[.86]">{title}</h1>
       <p className="mt-6 max-w-xl text-sm leading-relaxed opacity-75">{sub}</p>
