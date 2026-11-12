@@ -2,12 +2,15 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Pill } from './ui'
 
-const field = 'mt-2 w-full rounded-full border border-ink/10 bg-white/70 px-5 py-3 text-sm outline-none transition duration-500 ease-soft placeholder:opacity-40 focus:border-ink/40 focus:bg-white'
+const field = 'mt-2 w-full rounded-full border border-ink/10 bg-white/70 px-5 py-3.5 text-base outline-none transition duration-500 ease-soft placeholder:opacity-40 focus:border-ink/40 focus:bg-white md:py-3 md:text-sm'
 const label = 'block text-[11px] uppercase tracking-[.16em]'
 
-export default function AuthForm({ onDone }) {
+// Email + password only. `mode` / `onMode` are optional so a parent can show a matching heading.
+export default function AuthForm({ onDone, mode: modeProp, onMode }) {
   const { enabled, signIn, signUp } = useAuth()
-  const [mode, setMode] = useState('in')
+  const [inner, setInner] = useState('in')
+  const mode = modeProp ?? inner
+  const setMode = onMode ?? setInner
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
@@ -47,9 +50,9 @@ export default function AuthForm({ onDone }) {
         <input type={show ? 'text' : 'password'} required minLength={6} autoComplete={mode === 'in' ? 'current-password' : 'new-password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" className={field} />
       </label>
       {msg.text && <p role="alert" className={`rounded-2xl px-4 py-3 text-xs leading-relaxed ${msg.ok ? 'bg-jelly/40' : 'bg-red-100 text-red-800'}`}>{msg.text}</p>}
-      <div className="flex flex-col items-start gap-4">
-        <Pill disabled={busy}>{busy ? 'Please wait…' : mode === 'in' ? 'Sign in' : 'Create account'}</Pill>
-        <button type="button" onClick={() => { setMode(m => (m === 'in' ? 'up' : 'in')); setMsg({ text: '', ok: false }) }} className="text-xs underline opacity-70">
+      <div className="space-y-4">
+        <Pill className="w-full" disabled={busy}>{busy ? 'Please wait…' : mode === 'in' ? 'Sign in' : 'Create account'}</Pill>
+        <button type="button" onClick={() => { setMode(mode === 'in' ? 'up' : 'in'); setMsg({ text: '', ok: false }) }} className="block w-full text-center text-xs underline opacity-70">
           {mode === 'in' ? 'New here? Create an account' : 'Already have an account? Sign in'}
         </button>
       </div>

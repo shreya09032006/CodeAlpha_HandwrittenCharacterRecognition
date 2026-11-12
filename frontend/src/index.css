@@ -48,3 +48,13 @@ button { cursor: pointer; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .page-in, .pop { animation: none; }
 }
+/* little jellyfish mascot */
+@keyframes jf-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes jf-pulse { 0%,100% { transform: scale(1,1); } 50% { transform: scale(1.05,.94); } }
+@keyframes jf-sway { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+@keyframes jf-blink { 0%,92%,100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+.jf-bob { animation: jf-bob 4.5s ease-in-out infinite; }
+.jf-bell { transform-box: fill-box; transform-origin: 50% 0%; animation: jf-pulse 3s ease-in-out infinite; }
+.jf-sway { transform-box: fill-box; transform-origin: 50% 0%; animation: jf-sway 3.2s ease-in-out infinite; }
+.jf-eye { transform-box: fill-box; transform-origin: 50% 50%; animation: jf-blink 5s infinite; }
+@media (prefers-reduced-motion: reduce) { .jf-bob, .jf-bell, .jf-sway, .jf-eye { animation: none; } }
