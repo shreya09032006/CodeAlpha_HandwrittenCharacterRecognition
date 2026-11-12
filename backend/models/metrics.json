@@ -1,0 +1,82 @@
+{
+  "test_accuracy_all_62": 0.864,
+  "letters_exact_accuracy": 0.879,
+  "letters_ignoring_case": 0.8378,
+  "most_confused": [
+    {
+      "true": "m",
+      "predicted": "M",
+      "count": 463
+    },
+    {
+      "true": "u",
+      "predicted": "U",
+      "count": 438
+    },
+    {
+      "true": "c",
+      "predicted": "C",
+      "count": 416
+    },
+    {
+      "true": "f",
+      "predicted": "F",
+      "count": 379
+    },
+    {
+      "true": "s",
+      "predicted": "S",
+      "count": 376
+    },
+    {
+      "true": "v",
+      "predicted": "V",
+      "count": 337
+    },
+    {
+      "true": "p",
+      "predicted": "P",
+      "count": 318
+    },
+    {
+      "true": "x",
+      "predicted": "X",
+      "count": 276
+    },
+    {
+      "true": "w",
+      "predicted": "W",
+      "count": 276
+    },
+    {
+      "true": "k",
+      "predicted": "K",
+      "count": 237
+    },
+    {
+      "true": "y",
+      "predicted": "Y",
+      "count": 208
+    },
+    {
+      "true": "z",
+      "predicted": "Z",
+      "count": 167
+    },
+    {
+      "true": "j",
+      "predicted": "J",
+      "count": 91
+    },
+    {
+      "true": "t",
+      "predicted": "T",
+      "count": 87
+    },
+    {
+      "true": "I",
+      "predicted": "l",
+      "count": 83
+    }
+  ]
+}
