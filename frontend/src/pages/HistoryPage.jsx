@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { PageHeader, Pill } from '../components/ui'
 import { DemoTag } from '../components/Results'
 import SignInGate from '../components/SignInGate'
-import { getHistory, downloadReport } from '../lib/api'
+import { getHistory, downloadReport, clearHistory } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 
 const FILTERS = [['all', 'All'], ['character', 'Letters'], ['word', 'Words'], ['essay', 'Essays']]
@@ -52,6 +52,13 @@ export default function HistoryPage() {
   const [filter, setFilter] = useState('all')
   const [q, setQ] = useState('')
   const [openId, setOpenId] = useState(null)
+  const [clearing, setClearing] = useState(false)
+
+  const clearAll = async () => {
+    if (!window.confirm('Delete all your saved scans? This clears both History and Insights and cannot be undone.')) return
+    setClearing(true)
+    try { await clearHistory(token); setRows([]); setOpenId(null) } catch (e) { setErr(e.message) } finally { setClearing(false) }
+  }
 
   useEffect(() => {
     if (gated) return
@@ -91,6 +98,7 @@ export default function HistoryPage() {
               className="glass w-full max-w-xs rounded-full px-5 py-2.5 text-sm outline-none placeholder:opacity-40 focus:bg-white/80"
             />
             {rows.demo && <DemoTag />}
+            {rows.length > 0 && !rows.demo && <button onClick={clearAll} disabled={clearing} className="ml-auto rounded-full border border-red-700/30 bg-white/60 px-5 py-2.5 text-[11px] uppercase tracking-[.14em] text-red-700 transition duration-500 ease-soft hover:bg-red-50 disabled:opacity-40">{clearing ? 'Clearing…' : 'Clear all'}</button>}
           </div>
 
           {shown.length === 0 ? (

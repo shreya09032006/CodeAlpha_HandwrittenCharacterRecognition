@@ -71,6 +71,9 @@ export async function downloadReport(id, token) {
 export const getHistory = token =>
   withFallback(async () => (await request('/api/history', { token })).json(), demo.history)
 
+// DELETE /api/history -> { deleted } (clears History and Insights for this user)
+export const clearHistory = async token => (await request('/api/history', { token, method: 'DELETE' })).json()
+
 // GET /api/analytics -> { scans: [{day, character, word, essay}], confidence: [{day, value}], issues: [{type, count}] }
 export const getAnalytics = token =>
-  withFallback(async () => (await request('/api/analytics', { token })).json(), demo.analytics)
+  withFallback(async () => (await request(`/api/analytics?tz=${-new Date().getTimezoneOffset()}`, { token })).json(), demo.analytics)

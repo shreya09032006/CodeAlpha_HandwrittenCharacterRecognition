@@ -3,7 +3,7 @@ import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tool
 import { PageHeader } from '../components/ui'
 import { Panel, DemoTag } from '../components/Results'
 import SignInGate from '../components/SignInGate'
-import { getAnalytics } from '../lib/api'
+import { getAnalytics, clearHistory } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 
 const INK = '#0b0b10', PINK = '#f4a3c4', DEEP = '#e8709f', LAV = '#b9b0ea'
@@ -33,6 +33,13 @@ export default function InsightsPage() {
   const gated = enabled && !user
   const [data, setData] = useState(null)
   const [err, setErr] = useState('')
+  const [clearing, setClearing] = useState(false)
+
+  const clearAll = async () => {
+    if (!window.confirm('Delete all your saved scans? This clears both History and Insights and cannot be undone.')) return
+    setClearing(true)
+    try { await clearHistory(token); setData(await getAnalytics(token)) } catch (e) { setErr(e.message) } finally { setClearing(false) }
+  }
 
   useEffect(() => {
     if (gated) return
@@ -67,11 +74,14 @@ export default function InsightsPage() {
         </div>
       ) : (
         <>
-          {data.demo && <div className="mb-4"><DemoTag /></div>}
+          <div className="mb-4 flex items-center gap-3">
+            {data.demo && <DemoTag />}
+            {!data.demo && <button onClick={clearAll} disabled={clearing} className="ml-auto rounded-full border border-red-700/30 bg-white/60 px-5 py-2.5 text-[11px] uppercase tracking-[.14em] text-red-700 transition duration-500 ease-soft hover:bg-red-50 disabled:opacity-40">{clearing ? 'Clearing…' : 'Clear all'}</button>}
+          </div>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <Stat label="Total scans" value={stats.total} />
+            <Stat label="Scans, last 7 days" value={stats.total} />
             <Stat label="Avg confidence" value={`${stats.avg}%`} />
-            <Stat label="Essays corrected" value={stats.essays} />
+            <Stat label="Essays, last 7 days" value={stats.essays} />
             <Stat label="Top mistake" value={stats.top} />
           </div>
 
@@ -99,7 +109,7 @@ export default function InsightsPage() {
                   <LineChart data={data.confidence}>
                     <CartesianGrid vertical={false} stroke="rgba(11,11,16,.08)" />
                     <XAxis dataKey="day" {...axis} />
-                    <YAxis domain={[60, 100]} {...axis} width={28} />
+                    <YAxis domain={[0, 100]} {...axis} width={28} />
                     <Tooltip {...tip} />
                     <Line type="monotone" dataKey="value" name="Confidence" stroke={DEEP} strokeWidth={3} dot={{ r: 4, fill: INK, strokeWidth: 0 }} activeDot={{ r: 6 }} />
                   </LineChart>
@@ -108,6 +118,7 @@ export default function InsightsPage() {
             </Panel>
 
             <Panel label="Essay issues by type">
+              {data.issues.length === 0 && <p className="text-xs opacity-60">No essay mistakes in the last 7 days.</p>}
               <div className="h-64">
                 <ResponsiveContainer>
                   <PieChart>

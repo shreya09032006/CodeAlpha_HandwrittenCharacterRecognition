@@ -8,3 +8,11 @@ venv/
 .venv/
 *.pyc
 .DS_Store
+
+backend/data/
+backend/.env
+frontend/.env
+**/venv/
+.vscode/
+*.log
+training/data/

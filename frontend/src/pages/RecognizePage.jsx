@@ -30,6 +30,7 @@ const MODES = {
     sub: 'Upload a handwritten page. TrOCR extracts the text, an AI editor corrects it, and you get a PDF report.',
     waiting: 'Essay',
     action: 'Read & correct',
+    note: 'Heads up: reading the handwriting and checking it with AI can take a minute or two, especially for a long essay. Please keep this page open.',
     run: correctEssay,
   },
 }
@@ -124,7 +125,7 @@ export default function RecognizePage({ mode }) {
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           <OriginalCard url={url} name={file.name} scanning={state === 'loading'} />
-          {!done && <Waiting title={cfg.waiting} loading={state === 'loading'} />}
+          {!done && <Waiting title={cfg.waiting} loading={state === 'loading'} note={cfg.note} />}
           {done && mode === 'character' && <CharacterResult r={result} />}
           {done && mode === 'word' && <WordResult r={result} />}
           {done && mode === 'essay' && <EssayResult r={result} />}

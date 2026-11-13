@@ -39,13 +39,14 @@ export function OriginalCard({ url, name, scanning }) {
   )
 }
 
-export function Waiting({ title, loading }) {
+export function Waiting({ title, loading, note }) {
   return (
     <Panel label="Prediction">
       <div className="grid flex-1 place-items-center py-10 text-center">
         <div>
           <p className="font-display text-3xl uppercase leading-none opacity-80">{loading ? 'Reading…' : title}</p>
           <p className="mt-3 text-xs opacity-60">{loading ? 'Hold on, this takes a moment.' : 'Your result appears here, next to the image.'}</p>
+          {note && <p className="mx-auto mt-4 max-w-xs rounded-2xl bg-white/60 px-4 py-3 text-xs leading-relaxed">{note}</p>}
         </div>
       </div>
     </Panel>
@@ -77,23 +78,41 @@ export function CharacterResult({ r }) {
 }
 
 export function WordResult({ r }) {
+  const [text, setText] = useState(r.text)
   const [copied, setCopied] = useState(false)
+  const lines = r.lines || r.words || []
+  const copy = () => { navigator.clipboard?.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500) }
+  const save = () => {
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }))
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'inklens-text.txt' })
+    a.click()
+    URL.revokeObjectURL(url)
+  }
   return (
     <Panel label="Recognised text" tag={r.demo && <DemoTag />}>
-      <div className="flex flex-1 flex-col justify-center gap-5">
-        <p className="break-words font-display text-[clamp(2.25rem,5vw,3.75rem)] uppercase leading-[.95]">{r.text}</p>
-        <p className="text-xs uppercase tracking-[.18em] opacity-70">{pct(r.confidence)} overall confidence</p>
+      <div className="flex flex-1 flex-col gap-4">
+        <textarea
+          value={text}
+          onChange={e => setText(e.target.value)}
+          rows={Math.min(10, Math.max(3, text.split('\n').length + 1))}
+          aria-label="Recognised text, you can edit it"
+          className="w-full resize-y rounded-2xl bg-white/70 p-4 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ink/30"
+        />
+        <p className="text-xs uppercase tracking-[.18em] opacity-70">
+          {pct(r.confidence)} overall confidence · edit anything that is wrong, then copy
+        </p>
+        {lines.length > 1 && (
+          <div className="flex flex-wrap gap-2">
+            {lines.map((l, i) => (
+              <span key={i} className="rounded-full bg-white/70 px-3 py-1.5 text-xs">
+                Line {i + 1} <span className="opacity-50">· {pct(l.confidence)}</span>
+              </span>
+            ))}
+          </div>
+        )}
         <div className="flex flex-wrap gap-2">
-          {r.words.map((w, i) => (
-            <span key={i} className="rounded-full bg-white/70 px-3 py-1.5 text-xs">
-              {w.text} <span className="opacity-50">· {pct(w.confidence)}</span>
-            </span>
-          ))}
-        </div>
-        <div>
-          <Pill variant="ghost" onClick={() => { navigator.clipboard?.writeText(r.text); setCopied(true); setTimeout(() => setCopied(false), 1500) }}>
-            {copied ? 'Copied' : 'Copy text'}
-          </Pill>
+          <Pill variant="ghost" onClick={copy}>{copied ? 'Copied' : 'Copy text'}</Pill>
+          <Pill variant="ghost" onClick={save}>Download .txt</Pill>
         </div>
       </div>
     </Panel>
@@ -111,6 +130,34 @@ function Marked({ text, phrases, cls }) {
 
 const TYPE_STYLE = { grammar: 'bg-[#bcd9ff]', spelling: 'bg-jelly', style: 'bg-[#e2f0a0]', punctuation: 'bg-[#ffd9a0]' }
 
+function CorrectedText({ r }) {
+  const [text, setText] = useState(r.corrected_text)
+  const [copied, setCopied] = useState(false)
+  const copy = () => { navigator.clipboard?.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500) }
+  const save = () => {
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }))
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'inklens-corrected-essay.txt' })
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+  return (
+    <Panel label="Corrected essay" tag={r.demo && <DemoTag />}>
+      <div className="flex flex-1 flex-col gap-4">
+        <textarea
+          value={text}
+          onChange={e => setText(e.target.value)}
+          aria-label="Corrected essay, you can edit it"
+          className="min-h-[300px] w-full flex-1 resize-y rounded-2xl bg-white/70 p-4 text-base leading-relaxed outline-none focus:ring-2 focus:ring-ink/30"
+        />
+        <div className="flex flex-wrap gap-2">
+          <Pill variant="ghost" onClick={copy}>{copied ? 'Copied' : 'Copy text'}</Pill>
+          <Pill variant="ghost" onClick={save}>Download .txt</Pill>
+        </div>
+      </div>
+    </Panel>
+  )
+}
+
 export function EssayResult({ r }) {
   const { token } = useAuth()
   const [busy, setBusy] = useState(false)
@@ -121,52 +168,55 @@ export function EssayResult({ r }) {
   }
 
   return (
-    <div className="space-y-4 lg:col-span-2">
-      <div className="grid gap-4 md:grid-cols-2">
-        <Panel label="What you wrote" tag={r.demo && <DemoTag />}>
-          <p className="whitespace-pre-wrap text-sm leading-[1.8]">
-            <Marked text={r.raw_text} phrases={r.feedback.map(f => f.original)} cls="bg-ink/10 line-through decoration-ink/50" />
-          </p>
-        </Panel>
-        <Panel label="Corrected">
-          <p className="whitespace-pre-wrap text-sm leading-[1.8]">
-            <Marked text={r.corrected_text} phrases={r.feedback.map(f => f.suggestion)} cls="bg-jelly/70" />
-          </p>
-        </Panel>
-      </div>
+    <>
+      <CorrectedText r={r} />
+      <div className="space-y-4 lg:col-span-2">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Panel label="What you wrote" tag={r.demo && <DemoTag />}>
+            <p className="whitespace-pre-wrap text-sm leading-[1.8]">
+              <Marked text={r.raw_text} phrases={r.feedback.map(f => f.original)} cls="bg-ink/10 line-through decoration-ink/50" />
+            </p>
+          </Panel>
+          <Panel label="Corrected">
+            <p className="whitespace-pre-wrap text-sm leading-[1.8]">
+              <Marked text={r.corrected_text} phrases={r.feedback.map(f => f.suggestion)} cls="bg-jelly/70" />
+            </p>
+          </Panel>
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-[1fr_2fr]">
-        <Panel label="Scores">
-          <dl className="space-y-4">
-            {Object.entries(r.scores).map(([k, v]) => (
-              <div key={k}>
-                <div className="flex justify-between text-xs uppercase tracking-[.18em]"><dt>{k}</dt><dd>{v}</dd></div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-ink/10">
-                  <div className="h-full rounded-full bg-gradient-to-r from-jelly to-jelly-deep" style={{ width: `${v}%`, animation: 'bar 1.2s var(--ease-soft) both' }} />
+        <div className="grid gap-4 md:grid-cols-[1fr_2fr]">
+          <Panel label="Scores">
+            <dl className="space-y-4">
+              {Object.entries(r.scores).map(([k, v]) => (
+                <div key={k}>
+                  <div className="flex justify-between text-xs uppercase tracking-[.18em]"><dt>{k}</dt><dd>{v}</dd></div>
+                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-ink/10">
+                    <div className="h-full rounded-full bg-gradient-to-r from-jelly to-jelly-deep" style={{ width: `${v}%`, animation: 'bar 1.2s var(--ease-soft) both' }} />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </dl>
-          <div className="mt-6">
-            <Pill onClick={report} disabled={busy || r.demo} title={r.demo ? 'Available once the backend is connected' : ''}>
-              {busy ? 'Preparing…' : 'PDF report'}
-            </Pill>
-          </div>
-          {err && <p role="alert" className="mt-2 text-xs text-red-700">{err}</p>}
-        </Panel>
+              ))}
+            </dl>
+            <div className="mt-6">
+              <Pill onClick={report} disabled={busy || r.demo} title={r.demo ? 'Available once the backend is connected' : ''}>
+                {busy ? 'Preparing…' : 'PDF report'}
+              </Pill>
+            </div>
+            {err && <p role="alert" className="mt-2 text-xs text-red-700">{err}</p>}
+          </Panel>
 
-        <Panel label={`Feedback · ${r.feedback.length} changes`}>
-          <ul className="space-y-2">
-            {r.feedback.map((f, i) => (
-              <li key={i} className="rounded-2xl bg-white/70 p-4 text-xs leading-relaxed">
-                <span className={`mr-2 rounded-full px-2.5 py-0.5 uppercase tracking-wide ${TYPE_STYLE[f.type] || 'bg-ink/10'}`}>{f.type}</span>
-                <s className="opacity-50">{f.original}</s> → <strong>{f.suggestion}</strong>
-                <p className="mt-1.5 opacity-65">{f.note}</p>
-              </li>
-            ))}
-          </ul>
-        </Panel>
+          <Panel label={`Feedback · ${r.feedback.length} changes`}>
+            <ul className="space-y-2">
+              {r.feedback.map((f, i) => (
+                <li key={i} className="rounded-2xl bg-white/70 p-4 text-xs leading-relaxed">
+                  <span className={`mr-2 rounded-full px-2.5 py-0.5 uppercase tracking-wide ${TYPE_STYLE[f.type] || 'bg-ink/10'}`}>{f.type}</span>
+                  <s className="opacity-50">{f.original}</s> → <strong>{f.suggestion}</strong>
+                  <p className="mt-1.5 opacity-65">{f.note}</p>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

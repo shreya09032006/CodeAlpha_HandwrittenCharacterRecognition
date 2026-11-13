@@ -6,3 +6,7 @@ opencv-python-headless>=4.9
 gunicorn>=22.0
 # Deep learning (Keras 3). Use Python 3.10 to 3.12 locally.
 tensorflow>=2.16
+requests>=2.31
+reportlab>=4.0
+sentencepiece>=0.2
+protobuf>=4.25

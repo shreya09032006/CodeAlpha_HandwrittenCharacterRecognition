@@ -6,6 +6,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 import config
+from api.essays import bp as essays_bp
+from api.history import bp as history_bp
 from api.recognize import bp as recognize_bp
 from ml import char_model
 
@@ -15,6 +17,8 @@ def create_app() -> Flask:
     app.config["MAX_CONTENT_LENGTH"] = config.MAX_UPLOAD_MB * 1024 * 1024
     CORS(app, origins=config.CORS_ORIGINS)
     app.register_blueprint(recognize_bp)
+    app.register_blueprint(essays_bp)
+    app.register_blueprint(history_bp)
 
     @app.get("/api/health")
     def health():
