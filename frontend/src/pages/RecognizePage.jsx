@@ -19,7 +19,7 @@ const MODES = {
   word: {
     index: '02 · Word',
     title: 'Word',
-    sub: 'Upload a handwritten word or line. A CRNN reads it left to right and returns the text.',
+    sub: 'Upload a handwritten word or line. A TrOCR model reads it line by line and returns the text.',
     waiting: 'Word',
     action: 'Recognise word',
     run: recognizeWord,

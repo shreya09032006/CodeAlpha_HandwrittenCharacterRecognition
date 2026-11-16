@@ -191,7 +191,7 @@ export default function Hero() {
             <div className="bar" aria-hidden="true"><i id="thumb"></i></div>
             <div className="cap">
               <svg id="goggle" viewBox="0 0 30 20" aria-hidden="true"><path fillRule="evenodd" d="M7 2h16a6 6 0 0 1 6 6v5a5 5 0 0 1-9 3l-2-3h-6l-2 3a5 5 0 0 1-9-3V8a6 6 0 0 1 6-6Zm1 5a3.500 3.500 0 1 0 0 7 3.500 3.500 0 0 0 0-7Zm14 0a3.500 3.500 0 1 0 0 7 3.500 3.500 0 0 0 0-7Z"/></svg>
-              <p id="c1">Upload handwritten letters, words and essays <br />and watch a CNN and CRNN read every stroke</p>
+              <p id="c1">Upload handwritten letters, words and essays <br />and watch a CNN and TrOCR read every stroke</p>
               <p id="c2" style={{ opacity: 0 }}>Trained on EMNIST and IAM, read with TrOCR <br />and polished by AI essay correction</p>
             </div>
             <p className="panel p1" id="p1">Recognise every letter from A to Z and a to z with a CNN trained on EMNIST</p>

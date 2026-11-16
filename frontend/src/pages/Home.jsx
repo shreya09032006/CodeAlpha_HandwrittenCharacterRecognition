@@ -4,7 +4,7 @@ import { Reveal, Pill } from '../components/ui'
 
 const FEATURES = [
   ['/alphabet', 'Alphabet', 'A–Z and a–z read by a CNN trained on EMNIST.'],
-  ['/word', 'Word', 'Whole handwritten words read by a CRNN sequence model.'],
+  ['/word', 'Word', 'Whole handwritten words and notes read by a TrOCR transformer.'],
   ['/essay', 'Essay', 'TrOCR reads the page, an LLM fixes grammar and spelling, ReportLab makes the PDF.'],
   ['/insights', 'Insights', 'Scans, confidence and mistakes over time.'],
   ['/history', 'History', 'Every essay and scan, saved to your account.'],
