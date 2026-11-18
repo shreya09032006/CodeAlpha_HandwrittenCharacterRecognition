@@ -2,6 +2,8 @@
 
 My submission for **CodeAlpha Machine Learning Internship, Task 3: Handwritten Character Recognition**. InkLens reads handwritten letters, digits, words and whole essays from a photo, and can correct and score an essay.
 
+🎥 **Demo video:** [Watch the walkthrough on LinkedIn](https://lnkd.in/p/dpEjrcjy)
+
 ![InkLens home](docs/home.png)
 
 ## ✨ Features
